@@ -87,18 +87,21 @@
           《日内瓦公约》《主动防御战略守则》《青少年网络健康管理条例》
         </div>
         <div class="input-row">
-          <input
-            ref="pwdInput"
-            v-model="password"
-            type="password"
-            placeholder="输入访问密钥"
-            maxlength="20"
-            autocomplete="off"
-            @keypress.enter="checkPwd"
-          />
+          <div class="input-wrapper">
+            <input
+              ref="pwdInput"
+              v-model="password"
+              :type="showPwd ? 'text' : 'password'"
+              placeholder="输入访问密钥"
+              maxlength="20"
+              autocomplete="off"
+              @keypress.enter="checkPwd"
+            />
+            <span class="toggle-pwd" @click="showPwd = !showPwd" title="显示/隐藏密码">{{ showPwd ? '🙈' : '👁️' }}</span>
+          </div>
           <button @click="checkPwd">验证</button>
         </div>
-        <div class="hint">提示：密码为 zwy天下第一帅</div>
+        <div class="hint">提示：密码为 zwycool</div>
         <div class="error-msg" :style="{ color: errColor }">{{ errMsg }}</div>
         <div style="margin-top:16px;font-family:'Arial',sans-serif;font-size:10px;color:#bbb;letter-spacing:1px;">SESSION-ID: X7-CIA-88291-DECRYPT</div>
       </div>
@@ -107,7 +110,7 @@
       <div v-if="decrypted" class="video-container">
         <div class="video-inner">
           <h3 class="video-title">🔓 机密内容已解密</h3>
-          <video controls autoplay class="cia-video">
+          <video controls autoplay class="cia-video" @ended="closeVideo">
             <source src="/2.mp4" type="video/mp4">
             您的浏览器不支持视频播放。
           </video>
@@ -218,9 +221,10 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
 
-const CORRECT_PWD = 'zwy天下第一帅'
+const CORRECT_PWD = 'zwycool'
 
 const password = ref('')
+const showPwd = ref(false)
 const errMsg = ref('')
 const errColor = ref('#ef5350')
 const isGlitch = ref(false)
@@ -229,12 +233,20 @@ const decrypted = ref(false)
 const accessCard = ref(null)
 const pwdInput = ref(null)
 
+function closeVideo() {
+  decrypted.value = false
+  errMsg.value = '✓ 文件已销毁，会话已清除'
+  errColor.value = '#4fc3f7'
+  password.value = ''
+  pwdInput.value?.focus()
+}
+
 function checkPwd() {
   if (password.value === CORRECT_PWD) {
     isShake.value = false
     isGlitch.value = false
     errColor.value = '#4fc3f7'
-    errMsg.value = '✓ 密码正确，正在解密文件...'
+    errMsg.value = '✓ 密码正确正在解密文件,10s后自动销毁...'
     setTimeout(() => {
       decrypted.value = true
     }, 800)
@@ -619,26 +631,46 @@ main {
   position: relative;
   z-index: 2;
 }
-.access-card input[type="password"] {
+.access-card .input-wrapper {
   flex: 1;
+  position: relative;
+}
+.access-card .input-wrapper input {
+  width: 100%;
   background: #f9f9f9;
   border: 1px solid #ccc;
   color: #1a1a1a;
   font-family: 'Courier New', monospace;
   font-size: 16px;
-  padding: 10px 14px;
+  padding: 10px 40px 10px 14px;
   letter-spacing: 4px;
   outline: none;
   transition: border 0.2s;
 }
-.access-card input[type="password"]:focus {
+.access-card .input-wrapper input:focus {
   border-color: #002b7f;
   box-shadow: 0 0 0 2px rgba(0,43,127,0.15);
 }
-.access-card input[type="password"]::placeholder {
+.access-card .input-wrapper input::placeholder {
   letter-spacing: 1px;
   font-size: 12px;
   color: #aaa;
+}
+.access-card .toggle-pwd {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+  z-index: 3;
+  color: #888;
+  transition: color 0.2s;
+  line-height: 1;
+}
+.access-card .toggle-pwd:hover {
+  color: #002b7f;
 }
 .access-card button {
   background: transparent;
@@ -870,18 +902,60 @@ footer .footer-col a:hover {
 /* ===== 响应式 ===== */
 @media (max-width: 768px) {
   .nav { flex-direction: column; gap: 12px; padding: 12px 20px; }
-  .nav-links { flex-wrap: wrap; justify-content: center; gap: 14px; }
-  main { padding: 32px 20px; }
-  .about-lead h1 { font-size: 30px; }
-  .grid-2col { grid-template-columns: 1fr; gap: 28px; }
+  .nav-links { flex-wrap: wrap; justify-content: center; gap: 14px; font-size: 12px; }
+  .nav-logo-text { font-size: 12px; }
+  .nav-logo-text small { font-size: 8px; }
+  .nav-search { display: none; }
+  main { padding: 24px 16px; }
+  .about-lead h1 { font-size: 28px; }
+  .about-lead p { font-size: 16px; }
+  .grid-2col { grid-template-columns: 1fr; gap: 24px; }
+  .grid-2col h2 { font-size: 20px; }
+  .hero-quote { padding: 24px 20px; margin: 0 0 32px; }
+  .hero-quote p { font-size: 18px; }
   .explore-grid { grid-template-columns: 1fr 1fr; }
-  .access-card { padding: 28px 20px; }
-  footer .footer-inner { grid-template-columns: 1fr 1fr; }
-  .cta-banner { padding: 28px 20px; }
+  .access-card { padding: 24px 16px; margin: 0 0 32px; }
+  .access-card h2 { font-size: 15px; }
+  .access-card .input-row { flex-direction: column; gap: 8px; }
+  .access-card .legal-warning { font-size: 9px; padding: 8px 10px; }
+  .access-card .card-warning { font-size: 10px; padding: 10px 0; }
+  .access-card .toggle-pwd { font-size: 20px; right: 12px; }
+  footer .footer-inner { grid-template-columns: 1fr 1fr; gap: 20px; }
+  footer { padding: 28px 20px 16px; }
+  .cta-banner { padding: 28px 20px; margin: 0 0 32px; }
   .cta-banner h2 { font-size: 20px; }
+  .cta-banner p { font-size: 13px; }
+  .video-container { margin: 0 16px 32px; }
 }
 @media (max-width: 480px) {
-  .explore-grid { grid-template-columns: 1fr; }
-  footer .footer-inner { grid-template-columns: 1fr; }
+  .top-bar { padding: 6px 16px; gap: 12px; font-size: 10px; flex-wrap: wrap; justify-content: center; }
+  .nav-links { gap: 10px; font-size: 11px; }
+  .nav-links a { white-space: nowrap; }
+  .about-lead h1 { font-size: 22px; }
+  .about-lead p { font-size: 14px; }
+  .about-lead .seal-row { flex-wrap: wrap; gap: 10px; }
+  .about-lead .seal-row .signature { font-size: 10px; text-align: center; }
+  .hero-quote p { font-size: 16px; }
+  .grid-2col h2 { font-size: 18px; }
+  .grid-2col p, .grid-2col ul li { font-size: 13px; }
+  .explore-grid { grid-template-columns: 1fr; gap: 10px; }
+  .explore-card { padding: 20px 12px; }
+  .access-card { padding: 20px 12px; }
+  .access-card h2 { font-size: 13px; letter-spacing: 1px; }
+  .access-card .card-sub { font-size: 8px; }
+  .access-card .watermark { font-size: 24px; }
+  .access-card .input-row { flex-direction: column; gap: 8px; }
+  .access-card .input-wrapper input { font-size: 14px; padding: 8px 38px 8px 10px; letter-spacing: 2px; }
+  .access-card .toggle-pwd { font-size: 18px; right: 10px; }
+  .access-card button { padding: 10px 20px; font-size: 12px; width: 100%; }
+  .footer-social { flex-direction: column; text-align: center; }
+  .footer-social .social-icons { flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .footer-bottom .links { justify-content: center; }
+  .cta-banner h2 { font-size: 17px; }
+  .cta-banner p { font-size: 12px; }
+  .cta-banner .cta-btn { padding: 10px 20px; font-size: 12px; }
+  .video-inner { padding: 12px; }
+  .video-title { font-size: 14px; }
 }
 </style>
