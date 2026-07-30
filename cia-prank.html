@@ -221,43 +221,149 @@
 
   /* ===== 密码验证卡片 ===== */
   .access-card {
-    background: #fff;
+    background: #f5f5f0;
     border: 1px solid #d4d4d4;
     padding: 40px 48px;
     max-width: 560px;
     margin: 0 auto 48px;
     text-align: center;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12), inset 0 0 0 1px #cc0000;
+    position: relative;
+    overflow: hidden;
+    color: #1a1a1a;
   }
+  /* 机密印章水印 */
+  .access-card .watermark {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-25deg);
+    font-family: 'Arial', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: rgba(204,0,0,0.06);
+    letter-spacing: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+  /* 扫描线横条动画 */
+  .access-card .scan-line {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #4fc3f7, transparent);
+    opacity: 0;
+    animation: cia-scan 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 10;
+  }
+  @keyframes cia-scan {
+    0%   { top: 0; opacity: 0; }
+    10%  { opacity: 0.7; }
+    90%  { opacity: 0.7; }
+    100% { top: 100%; opacity: 0; }
+  }
+  /* CRT 扫描线背景纹理 */
+  .access-card .scan-texture {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 80, 200, 0.04) 2px,
+      rgba(0, 80, 200, 0.04) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+  /* 故障闪烁 */
+  @keyframes cia-glitch {
+    0%   { opacity: 1; transform: translate(0); }
+    20%  { opacity: 0.8; transform: translate(-3px, 1px); }
+    40%  { opacity: 0.85; transform: translate(3px, -1px); }
+    60%  { opacity: 0.75; transform: translate(-2px, 2px); border-color: #ff0000; }
+    80%  { opacity: 0.9; transform: translate(1px, -1px); }
+    100% { opacity: 1; transform: translate(0); }
+  }
+  .access-card.glitch {
+    animation: cia-glitch 0.3s ease-in-out 3;
+    border-color: #ef5350;
+    box-shadow: 0 0 40px rgba(239,83,80,0.3);
+  }
+  /* 输错抖动 */
+  @keyframes cia-shake {
+    0%, 100% { transform: translateX(0); }
+    10% { transform: translateX(-8px); }
+    20% { transform: translateX(8px); }
+    30% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    50% { transform: translateX(-4px); }
+    60% { transform: translateX(4px); }
+    70% { transform: translateX(-2px); }
+    80% { transform: translateX(2px); }
+  }
+  .access-card.shake { animation: cia-shake 0.5s ease-in-out; }
   .access-card h2 {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 20px;
-    color: #002b7f;
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    color: #4fc3f7;
     margin-bottom: 6px;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(79,195,247,0.3);
+    position: relative;
+    z-index: 2;
   }
   .access-card .card-sub {
-    font-family: 'Arial', sans-serif;
-    font-size: 11px;
-    color: #cc0000;
-    letter-spacing: 1.5px;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: #ef5350;
+    letter-spacing: 3px;
     margin-bottom: 20px;
     text-transform: uppercase;
+    animation: ciasub-blink 1.2s step-end infinite;
+    position: relative;
+    z-index: 2;
+  }
+  @keyframes ciasub-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
   }
   .access-card .card-warning {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Courier New', monospace;
     font-size: 11px;
-    color: #888;
-    line-height: 1.6;
-    margin-bottom: 24px;
-    padding: 12px 0;
-    border-top: 1px dashed #ccc;
-    border-bottom: 1px dashed #ccc;
+    color: #ff8a80;
+    line-height: 1.7;
+    margin-bottom: 18px;
+    padding: 14px 0;
+    border-top: 1px solid #ef5350;
+    border-bottom: 1px solid #ef5350;
+    text-shadow: 0 0 4px rgba(239,83,80,0.2);
+    position: relative;
+    z-index: 2;
+  }
+  .access-card .legal-warning {
+    background: rgba(239,83,80,0.06);
+    border: 1px solid #ef5350;
+    color: #ff8a80;
+    font-size: 10px;
+    font-family: 'Courier New', monospace;
+    padding: 10px 12px;
+    margin-bottom: 18px;
+    line-height: 1.8;
+    text-align: center;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 0 8px rgba(239,83,80,0.12);
   }
   .access-card .input-row {
     display: flex;
     gap: 10px;
     margin-bottom: 12px;
+    position: relative;
+    z-index: 2;
   }
   .access-card input[type="password"] {
     flex: 1;
@@ -275,33 +381,48 @@
     border-color: #002b7f;
     box-shadow: 0 0 0 2px rgba(0,43,127,0.15);
   }
+  .access-card input[type="password"]::placeholder {
+    letter-spacing: 1px;
+    font-size: 12px;
+    color: #aaa;
+  }
   .access-card button {
-    background: #002b7f;
-    color: #fff;
-    border: none;
-    padding: 10px 28px;
-    font-family: 'Arial', sans-serif;
+    background: transparent;
+    color: #4fc3f7;
+    border: 1px solid #4fc3f7;
+    padding: 12px 28px;
+    font-family: 'Courier New', monospace;
     font-weight: 600;
     font-size: 13px;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 2;
   }
   .access-card button:hover {
-    background: #001d59;
+    background: rgba(79,195,247,0.1);
+    box-shadow: 0 0 16px rgba(79,195,247,0.25);
+  }
+  .access-card button:active {
+    background: rgba(239,83,80,0.2);
+    border-color: #ef5350;
   }
   .access-card .hint {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Courier New', monospace;
     font-size: 11px;
-    color: #999;
+    color: #555;
+    position: relative;
+    z-index: 2;
   }
   .error-msg {
-    color: #cc0000;
+    color: #ef5350;
     font-size: 12px;
     margin-top: 12px;
     min-height: 16px;
     letter-spacing: 0.5px;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Courier New', monospace;
   }
 
   /* ===== 探索更多 ===== */
@@ -520,7 +641,7 @@
     <h1>About CIA</h1>
     <p>Our mission is straightforward but critical: leverage the power of information to keep our Nation safe.</p>
     <div class="seal-row">
-      <span class="eagle"><img src="/image.png" alt="CIA Seal" style="height:48px;width:48px;"></span>
+      <span class="eagle"><img src="image.png" alt="CIA Seal" style="height:48px;width:48px;"></span>
       <span class="divider"></span>
       <span class="signature">
         The CIA seal features several symbols:<br>
@@ -689,12 +810,13 @@
     if (input.value === CORRECT_PWD) {
       errMsg.style.color = '#1a7a1a';
       errMsg.textContent = '✓ 密码正确，正在解密文件...';
+      accessCard.classList.remove('shake');
       setTimeout(() => {
         accessCard.style.display = 'none';
         videoContainer.innerHTML = `
-          <div style="background:#fff;border:1px solid #d4d4d4;padding:20px;max-width:800px;margin:0 auto 48px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-            <h3 style="font-family:Georgia,serif;color:#002b7f;margin-bottom:16px;">🔓 机密内容已解密</h3>
-            <video controls autoplay style="width:100%;max-height:70vh;border:1px solid #ccc;">
+          <div style="background:#0a0a0f;border:1px solid #4fc3f7;padding:20px;max-width:800px;margin:0 auto 48px;text-align:center;box-shadow:0 0 30px rgba(79,195,247,0.2);">
+            <h3 style="font-family:'Courier New',monospace;color:#4fc3f7;margin-bottom:16px;text-shadow:0 0 10px rgba(79,195,247,0.3);">🔓 机密内容已解密</h3>
+            <video controls autoplay style="width:100%;max-height:70vh;border:1px solid #1a3a6c;">
               <source src="${VIDEO_PATH}" type="video/mp4">
               您的浏览器不支持视频播放。
             </video>
@@ -705,6 +827,11 @@
     } else {
       errMsg.style.color = '#cc0000';
       errMsg.textContent = '× 访问被拒绝，密钥错误';
+      // 抖动 + 故障闪烁
+      accessCard.classList.remove('shake', 'glitch');
+      void accessCard.offsetWidth; // 强制回流以重启动画
+      accessCard.classList.add('shake', 'glitch');
+      setTimeout(() => accessCard.classList.remove('glitch'), 1000);
       input.value = '';
       input.focus();
     }
