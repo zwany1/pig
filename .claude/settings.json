@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command 'try { $wc = New-Object System.Net.WebClient; $wc.Headers.Add\\('\\\\''User-Agent'\\\\'','\\\\''Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36'\\\\''\\); $html = $wc.DownloadString\\('\\\\''https://www.cia.gov/about/'\\\\''\\); Write-Output $html.Substring\\(0,[Math]::Min\\(8000,$html.Length\\)\\) } catch { '\\\\''ERR: '\\\\'' + $_.Exception.Message }')"
+    ]
+  }
+}
